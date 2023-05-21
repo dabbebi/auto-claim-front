@@ -1,0 +1,42 @@
+.main-form {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.title-reg-page {
+    text-align: center;
+    margin-top: 12px;
+    padding-top: 10px;
+    padding-bottom: 20px;
+    color: #008B7B;
+    font-size: 30px;
+    margin-bottom: 12px;
+}
+
+.submit-container {
+    direction: rtl;
+    padding-right: 28px;
+    margin-top: 10px;
+}
+
+.login-container {
+    padding-top: 35px;
+    color: #008B7B;
+    text-align: center;
+}
+
+.view-pwd-container {
+    margin-top: 5px;
+}
+
+.login-div {
+    margin-top: 34px;
+}
+
+.login-logo {
+    width: 60px;
+    height: auto;
+}

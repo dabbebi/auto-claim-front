@@ -1,0 +1,31 @@
+<div class="login-div"> 
+    <div class="main-form card">
+        <div class="main-form title-reg-page">
+            Se connecter à <br>
+            <img src="../../../../assets/img/logo.png" class="login-logo" alt=""><br>
+            AutoClaim
+        </div>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">        
+            <div class="row">
+                <div class="lbl-cont"><label for="email" class="frm-label">E-mail</label></div>
+                <input type="email" class="frm-input-txt" id="email" formControlName="email"  autocomplete="off" maxlength="64" autofocus/>
+            </div>
+            <div class="row">
+                <div class="lbl-cont"><label for="password" class="frm-label">Mot de passe</label></div>
+                <input type="password" class="frm-input-txt" id="password" formControlName="password"  autocomplete="off"  maxlength="30"/>
+            </div>
+            <div class="row">
+                <div class="view-pwd-container">
+                    <input type="checkbox" name="viewpwd" id="viewpwd" (change)="viewPassword()"> <label for="viewpwd"> Afficher le mot de passe</label>
+                </div>
+            </div>
+            <div class="submit-container">
+                <button type="submit" class="frm-btn" id="submit-btn">Se connecter</button>
+            </div>  
+        </form>   
+        <div class="login-container">
+            <hr class="hr-in-card">
+            Voulez-vous créer un compte? <a href="/register"><button type="button" class="frm-btn-inv">S'enregistrer</button></a>
+        </div>
+    </div>
+</div>

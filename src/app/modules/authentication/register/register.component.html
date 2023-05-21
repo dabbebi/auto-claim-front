@@ -1,0 +1,64 @@
+<div class="register-div">
+    <div class="main-form card card title-reg-page">
+        Créer un compte
+    </div>
+    <div class="main-form card">
+        <form [formGroup]="registerForm" (ngSubmit)="register()">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="firstName" class="frm-label">Nom</label></div>
+                    <input type="text" class="frm-input-txt" id="firstName" formControlName="firstName" autocomplete="off" autofocus maxlength="25"/>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="lastName" class="frm-label">Prénom</label></div>
+                    <input type="text" class="frm-input-txt" id="lastName" formControlName="lastName"  autocomplete="off" maxlength="25"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="email" class="frm-label">E-mail</label></div>
+                    <input type="email" class="frm-input-txt" id="email" formControlName="email"  autocomplete="off" maxlength="64"/>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="address" class="frm-label">Addresse</label></div>
+                    <input type="text" class="frm-input-txt" id="address" formControlName="address"  autocomplete="off" maxlength="255"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="cin" class="frm-label">CIN</label></div>
+                    <input type="text" class="frm-input-txt" id="cin" formControlName="cin"  autocomplete="off" maxlength="8" 
+                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" />
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="telephone" class="frm-label">Téléphone</label></div>
+                    <input type="text" class="frm-input-txt" id="telephone" formControlName="telephone"  autocomplete="off" maxlength="8"
+                            oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="password" class="frm-label">Mot de passe</label></div>
+                    <input type="password" class="frm-input-txt" id="password" formControlName="password"  autocomplete="off"  maxlength="30"/>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont"><label for="confirmation" class="frm-label">Confirmation</label></div>
+                    <input type="password" class="frm-input-txt" id="confirmation" formControlName="confirmation"  autocomplete="off"  maxlength="30"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="view-pwd-container">
+                    <input type="checkbox" name="viewpwd" id="viewpwd" (change)="viewPassword()"> <label for="viewpwd"> Afficher le mot de passe</label>
+                </div>
+            </div>
+            <div class="submit-container">
+                <button type="submit" class="frm-btn" id="submit-btn">S'enregistrer</button>
+            </div>  
+        </form>
+        
+        <div class="login-container">
+            <hr class="hr-in-card">
+            Avez vous déjà un compte? <a href="/login"><button type="button" class="frm-btn-inv">Se connecter</button></a>
+        </div>
+    </div>
+</div>
