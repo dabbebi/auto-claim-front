@@ -3,6 +3,12 @@
         Créer un compte
     </div>
     <div class="main-form card">
+        <div *ngIf="isRegisterError" class="alert center">
+            La création du compte à échouée! Veuillez réessayer!
+        </div>
+        <div *ngIf="isRegisterSuccess" class="success center">
+            La création du compte à été éffectuée avec succès.
+        </div>
         <form [formGroup]="registerForm" (ngSubmit)="register()">
             <div class="row">
                 <div class="col-md-6">
@@ -14,6 +20,22 @@
                     <input type="text" class="frm-input-txt" id="lastName" formControlName="lastName"  autocomplete="off" maxlength="25"/>
                 </div>
             </div>
+            <div class="light-row">
+                <div class="col-md-6">
+                    <div *ngIf="firstName?.invalid && firstName?.dirty && firstName?.touched" class="alert alert-danger">
+                        <div *ngIf="firstName?.errors">
+                            * Le nom doit contenir entre 3 et 25 caractères.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div *ngIf="lastName?.invalid && lastName?.dirty && lastName?.touched" class="alert alert-danger">
+                        <div *ngIf="lastName?.errors">
+                            * Le prénom doit contenir entre 3 et 25 caractères.
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-6">
                     <div class="lbl-cont"><label for="email" class="frm-label">E-mail</label></div>
@@ -22,6 +44,13 @@
                 <div class="col-md-6">
                     <div class="lbl-cont"><label for="address" class="frm-label">Addresse</label></div>
                     <input type="text" class="frm-input-txt" id="address" formControlName="address"  autocomplete="off" maxlength="255"/>
+                </div>
+            </div>
+            <div class="light-row">
+                <div *ngIf="email?.invalid && email?.dirty && email?.touched" class="alert alert-danger">
+                    <div *ngIf="email?.errors">
+                        * L'adresse e-mail n'est pas valide.
+                    </div>
                 </div>
             </div>
             <div class="row">
@@ -44,6 +73,20 @@
                 <div class="col-md-6">
                     <div class="lbl-cont"><label for="confirmation" class="frm-label">Confirmation</label></div>
                     <input type="password" class="frm-input-txt" id="confirmation" formControlName="confirmation"  autocomplete="off"  maxlength="30"/>
+                </div>
+            </div>
+            <div class="light-row">
+                <div class="col-md-6">
+                    <div *ngIf="password?.invalid && password?.dirty && password?.touched" class="alert alert-danger">
+                        <div *ngIf="password?.errors">
+                            * Le mot de passe doit contenir entre 3 et 25 caractères.
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div *ngIf="isConfirmationError" class="alert alert-danger">
+                        * Veuillez conformez votre mot de passe.
+                    </div>
                 </div>
             </div>
             <div class="row">

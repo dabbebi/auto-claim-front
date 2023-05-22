@@ -12,11 +12,11 @@ export class AuthenticationService {
   constructor(private http : HttpClient) { }
 
   login(credentials : CredentialsDetails){
-    return this.http.post(url + '/users/login', credentials);
+    return this.http.post<any>(url + '/auth/login', credentials);
   }
 
   register(user : UserDetails){
-    return this.http.post(url + '/users', user);
+    return this.http.post<any>(url + '/users', user);
   }
 
 }

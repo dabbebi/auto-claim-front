@@ -5,14 +5,27 @@
             <img src="../../../../assets/img/logo.png" class="login-logo" alt=""><br>
             AutoClaim
         </div>
-        <form [formGroup]="loginForm" (ngSubmit)="login()">        
+        <div *ngIf="isLoginError" class="alert center">
+            L'authentification à échouée! Veuillez réessayer!
+        </div>
+        <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="row">
                 <div class="lbl-cont"><label for="email" class="frm-label">E-mail</label></div>
-                <input type="email" class="frm-input-txt" id="email" formControlName="email"  autocomplete="off" maxlength="64" autofocus/>
+                <input type="email" class="frm-input-txt" id="email" formControlName="email"  autocomplete="off" maxlength="64" autofocus required/>
+            </div>
+            <div *ngIf="email?.invalid && email?.dirty && email?.touched" class="alert alert-danger">
+                <div *ngIf="email?.errors">
+                    * L'adresse e-mail n'est pas valide.
+                </div>
             </div>
             <div class="row">
                 <div class="lbl-cont"><label for="password" class="frm-label">Mot de passe</label></div>
                 <input type="password" class="frm-input-txt" id="password" formControlName="password"  autocomplete="off"  maxlength="30"/>
+            </div>
+            <div *ngIf="password?.invalid && password?.dirty && password?.touched" class="alert alert-danger">
+                <div *ngIf="password?.errors">
+                    * Le mot de passe doit contenir entre 3 et 25 caractères.
+                </div>
             </div>
             <div class="row">
                 <div class="view-pwd-container">
@@ -20,12 +33,12 @@
                 </div>
             </div>
             <div class="submit-container">
-                <button type="submit" class="frm-btn" id="submit-btn">Se connecter</button>
+                <button type="submit" class="frm-btn enabled-btn" id="submit-btn">Se connecter</button>
             </div>  
         </form>   
         <div class="login-container">
             <hr class="hr-in-card">
-            Voulez-vous créer un compte? <a href="/register"><button type="button" class="frm-btn-inv">S'enregistrer</button></a>
+            Voulez-vous créer un compte? <a href="/auth/register"><button type="button" class="frm-btn-inv">S'enregistrer</button></a>
         </div>
     </div>
 </div>

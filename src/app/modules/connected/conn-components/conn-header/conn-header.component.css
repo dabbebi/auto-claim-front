@@ -1,0 +1,39 @@
+.title {
+    color: #008B7B;
+    font-size: 26px;
+    padding-top: 8px;
+}
+
+.conn-header {
+    margin: 0% !important;
+    padding: 4px 6px;
+    display: flex;
+    flex-direction: row;
+}
+
+.logo-img {
+    width: 45px;
+    height: auto;
+    margin-left: 12px;
+    margin-right: 10px;
+}
+
+.log-out {
+    display: flex;
+    flex-direction: row;
+    margin-left: auto;
+    margin-right: 10px;
+    color: #008B7B;
+    cursor: pointer;
+}
+
+.log-out-icon {
+    margin-top: auto;
+    margin-bottom: auto;
+    margin-right: 10px;
+}
+
+.log-out-title {
+    margin-top: auto;
+    margin-bottom: auto;
+}

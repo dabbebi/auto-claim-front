@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CredentialsDetails } from 'src/app/models/credentialsDetails.model';
+import { first } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -11,17 +12,16 @@ import { CredentialsDetails } from 'src/app/models/credentialsDetails.model';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
-  constructor (private authService : AuthenticationService, private router : Router){
-  }
 
-  loginForm = new FormGroup({
-    email: new FormControl(''),
-    password: new FormControl('')
-  });
-
-  isLoginSucceed: Boolean = false;
+  loginForm: FormGroup;
   isLoginError: Boolean = false;
-  loginErrorMessage: String = "";
+
+  constructor (private authService : AuthenticationService, private router : Router){
+    this.loginForm = new FormGroup({
+      email: new FormControl('', [Validators.required, Validators.email]),
+      password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)])
+    });
+  }
 
   ngOnInit(): void {
     let footer = document.getElementsByClassName('auth-footer');
@@ -29,6 +29,14 @@ export class LoginComponent {
       footer[0].classList.remove('is-register');
       footer[0].classList.add('is-login');
     }
+  }
+
+  get email() {
+    return this.loginForm.get('email');
+  }
+
+  get password() {
+    return this.loginForm.get('password');
   }
 
   viewPassword() {
@@ -42,50 +50,42 @@ export class LoginComponent {
     }
   }
 
-  login() {
+  disableSubmutButton() {
     document.getElementById("submit-btn")?.setAttribute("disabled","true");
-    document.getElementById("submit-btn")?.setAttribute("style","cursor: not-allowed;");
+    document.getElementById("submit-btn")?.classList.remove('enabled-btn');
+    document.getElementById("submit-btn")?.classList.add('disabled-btn');
+  }
 
-    const emailExpression: RegExp = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
+  enableSubmitButton() {
+    document.getElementById("submit-btn")?.removeAttribute("disabled");
+    document.getElementById("submit-btn")?.classList.remove('disabled-btn');
+    document.getElementById("submit-btn")?.classList.add('enabled-btn');
+  }
+
+  login() {
+    this.disableSubmutButton();
     this.isLoginError = false;
 
     let credentials = new CredentialsDetails();
     credentials.email = this.loginForm.value.email;
     credentials.password = this.loginForm.value.password;
 
-   
-
-    if(credentials.email === "" || !emailExpression.test(String(credentials.email))) {
-      document.getElementById('email')?.classList.add('frm-input-txt-err');
-      this.isLoginError = true;
-    }else {
-      document.getElementById('email')?.classList.remove('frm-input-txt-err');
-    }
-
-    if(credentials.password === "" 
-      || (credentials.password != null && credentials.password != undefined && credentials.password.length < 3)) {
-      document.getElementById('password')?.classList.add('frm-input-txt-err');
-      this.isLoginError = true;
-    }else {
-      document.getElementById('password')?.classList.remove('frm-input-txt-err');
-    }
-
-    if(!this.isLoginError) {
-      this.authService.login(credentials).subscribe((data : any)=>{
-        this.isLoginSucceed = true;
-        this.isLoginError = false;
-        console.log(data);   
+    if(this.loginForm.valid) {
+      
+      this.authService.login(credentials).pipe(first()).subscribe((response : any)=>{
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user_id', response.user_id);
+        
+        this.router.navigate(['/auto-claim/home']);
       },
-      (err : HttpErrorResponse)=>{
+      (error : HttpErrorResponse)=>{
+        this.enableSubmitButton();
         this.isLoginError = true;
-        this.loginErrorMessage = err.error.message;
-        document.getElementById("submit-btn")?.removeAttribute("disabled");
-        document.getElementById("submit-btn")?.setAttribute("style","cursor: pointer;");
-        console.log(err.error.message); 
+        console.log(error.message);
       });
     } else {
-      document.getElementById("submit-btn")?.removeAttribute("disabled");
-      document.getElementById("submit-btn")?.setAttribute("style","cursor: pointer;");
+      this.enableSubmitButton();
     }
   }
+
 }

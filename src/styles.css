@@ -84,7 +84,7 @@ body {
   box-shadow: rgba(0, 0, 0, .1) 0 2px 4px 0;
   box-sizing: border-box;
   color: #fff;
-  cursor: pointer;
+  /* cursor: pointer; */
   font-family: "Akzidenz Grotesk BQ Medium", -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 16px;
   font-weight: 400;
@@ -148,4 +148,43 @@ body {
     margin-left: auto;
     margin-right: auto;
     color: gray;
+}
+
+.enabled-btn {
+  cursor: pointer;
+}
+
+.disabled-btn {
+  cursor: not-allowed;
+}
+
+.ng-valid[required], .ng-valid.required  {
+  border: 1px solid #008507;
+}
+
+.ng-invalid:not(form)  {
+  border: 1px solid #ff4744;
+}
+
+.alert {
+  font-size: 14px;
+  color: #8f0000;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.success {
+  font-size: 14px;
+  color: #408f00;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.center {
+  text-align: center;
+}
+
+.light-row {
+  display: flex;
+  flex-direction: row;
 }

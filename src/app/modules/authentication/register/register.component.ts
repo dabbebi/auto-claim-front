@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { UserDetails } from 'src/app/models/userDetails.model';
-import { FormControl, FormGroup } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { Router } from '@angular/router';
 
@@ -16,19 +16,19 @@ export class RegisterComponent {
   }
 
   registerForm = new FormGroup({
-    firstName: new FormControl(''),
-    lastName: new FormControl(''),
-    email: new FormControl(''),
-    password: new FormControl(''),
-    telephone: new FormControl(''),
-    cin: new FormControl(''),
+    firstName: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
+    lastName: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
+    email: new FormControl('', [Validators.required, Validators.email]),
+    password: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)]),
+    telephone: new FormControl('', [Validators.minLength(8), Validators.maxLength(8)]),
+    cin: new FormControl('', [Validators.minLength(8), Validators.maxLength(8)]),
     address: new FormControl(''),
-    confirmation: new FormControl('')
+    confirmation: new FormControl('', [Validators.required, Validators.minLength(3), Validators.maxLength(25)])
   });
 
   isRegisterSuccess: Boolean = false;
   isRegisterError: Boolean = false;
-  registerErrorMessage: String = "";
+  isConfirmationError: Boolean = false;
 
   ngOnInit(): void {
     let footer = document.getElementsByClassName('auth-footer');
@@ -36,6 +36,38 @@ export class RegisterComponent {
       footer[0].classList.remove('is-login');
       footer[0].classList.add('is-register');
     }
+  }
+
+  get firstName() {
+    return this.registerForm.get('firstName');
+  }
+
+  get lastName() {
+    return this.registerForm.get('lastName');
+  }
+
+  get address() {
+    return this.registerForm.get('address');
+  }
+
+  get cin() {
+    return this.registerForm.get('cin');
+  }
+
+  get telephone() {
+    return this.registerForm.get('telephone');
+  }
+
+  get email() {
+    return this.registerForm.get('email');
+  }
+
+  get password() {
+    return this.registerForm.get('password');
+  }
+
+  get confirmation() {
+    return this.registerForm.get('confirmation');
   }
 
   viewPassword() {
@@ -49,13 +81,24 @@ export class RegisterComponent {
     }
   }
 
-  register() {
+  disableSubmitButton() {
     document.getElementById("submit-btn")?.setAttribute("disabled","true");
-    document.getElementById("submit-btn")?.setAttribute("style","cursor: not-allowed;");
+    document.getElementById("submit-btn")?.classList.remove('enabled-btn');
+    document.getElementById("submit-btn")?.classList.add('disabled-btn');
+  }
 
-    const emailExpression: RegExp = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+/0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/;
+  enableSubmitButton() {
+    document.getElementById("submit-btn")?.removeAttribute("disabled");
+    document.getElementById("submit-btn")?.classList.remove('disabled-btn');
+    document.getElementById("submit-btn")?.classList.add('enabled-btn');
+  }
+
+  register() {
+    this.disableSubmitButton();
     this.isRegisterError = false;
-
+    this.isRegisterSuccess = false;
+    this.isConfirmationError = false;
+    
     let user = new UserDetails();
     user.firstName = this.registerForm.value.firstName;
     user.lastName = this.registerForm.value.lastName;
@@ -65,53 +108,27 @@ export class RegisterComponent {
     user.password = this.registerForm.value.password;
     user.address = this.registerForm.value.address;
 
-    if(user.firstName === "") {
-      document.getElementById('firstName')?.classList.add('frm-input-txt-err');
-      this.isRegisterError = true;
-    }else {
-      document.getElementById('firstName')?.classList.remove('frm-input-txt-err');
-    }
-
-    if(user.lastName === "") {
-      document.getElementById('lastName')?.classList.add('frm-input-txt-err');
-      this.isRegisterError = true;
-    }else {
-      document.getElementById('lastName')?.classList.remove('frm-input-txt-err');
-    }
-
-    if(user.email === "" || !emailExpression.test(String(user.email))) {
-      document.getElementById('email')?.classList.add('frm-input-txt-err');
-      this.isRegisterError = true;
-    }else {
-      document.getElementById('email')?.classList.remove('frm-input-txt-err');
-    }
-
-    if(user.password !== this.registerForm.value.confirmation 
-      || (user.password != null && user.password != undefined && user.password.length < 3)) {
+    if(user.password !== this.registerForm.value.confirmation) {
       document.getElementById('password')?.classList.add('frm-input-txt-err');
       document.getElementById('confirmation')?.classList.add('frm-input-txt-err');
-      this.isRegisterError = true;
-    }else {
-      document.getElementById('password')?.classList.remove('frm-input-txt-err');
-      document.getElementById('confirmation')?.classList.remove('frm-input-txt-err');
+      this.isConfirmationError = true;
     }
 
-    if(!this.isRegisterError) {
-      this.authService.register(user).subscribe((data : any)=>{
+    if(!this.isConfirmationError && this.registerForm.valid) {
+      this.authService.register(user).subscribe((response : HttpResponse<any>)=>{
+        this.enableSubmitButton();
         this.isRegisterSuccess = true;
         this.isRegisterError = false;
-        console.log(data);   
+        console.log(response);  
       },
-      (err : HttpErrorResponse)=>{
+      (error : HttpErrorResponse)=>{
+        this.enableSubmitButton();
         this.isRegisterError = true;
-        this.registerErrorMessage = err.error.message;
-        document.getElementById("submit-btn")?.removeAttribute("disabled");
-        document.getElementById("submit-btn")?.setAttribute("style","cursor: pointer;");
-        console.log(err.error.message); 
+        this.isRegisterSuccess = false;
+        console.log(error.message);
       });
     } else {
-      document.getElementById("submit-btn")?.removeAttribute("disabled");
-      document.getElementById("submit-btn")?.setAttribute("style","cursor: pointer;");
+      this.enableSubmitButton();
     }
   }
 

@@ -1,0 +1,10 @@
+.connected-body {
+    display: flex;
+    flex-direction: row;
+}
+
+.page-component-container {
+    margin-top: 12px;
+    margin-left: 12px;
+    min-width: calc(100vw - 270px);
+}

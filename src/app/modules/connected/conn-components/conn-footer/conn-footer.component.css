@@ -1,0 +1,20 @@
+.conn-footer {
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    bottom: 0px !important;
+    top: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
+    width: 100%;
+}
+
+.company {
+    color: #008B7B;
+}
+
+.conn-footer-content {
+    text-align: center;
+    width: 100%;
+}
