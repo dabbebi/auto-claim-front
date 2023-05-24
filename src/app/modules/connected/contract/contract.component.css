@@ -1,0 +1,27 @@
+.control-pannel {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ctrl-action {
+    margin-right: 8px;
+}
+
+.single-action {
+    display: flex;
+    flex-direction: row;
+}
+
+td , th{
+    padding: 10px 16px !important;
+}
+
+.ng-star-inserted {
+    width: 85%;
+}
+
+.search-div {
+    width: calc(100% - 80px);
+}

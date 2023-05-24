@@ -158,11 +158,11 @@ body {
   cursor: not-allowed;
 }
 
-.ng-valid[required], .ng-valid.required  {
+.ng-valid[required].ng-touched, .ng-valid.required.ng-touched  {
   border: 1px solid #008507;
 }
 
-.ng-invalid:not(form)  {
+.ng-invalid.ng-touched:not(form)  {
   border: 1px solid #ff4744;
 }
 
@@ -187,4 +187,12 @@ body {
 .light-row {
   display: flex;
   flex-direction: row;
+}
+
+.green-color {
+  color: #008B7B;
+}
+
+.font-bold {
+  font-weight: bold;
 }

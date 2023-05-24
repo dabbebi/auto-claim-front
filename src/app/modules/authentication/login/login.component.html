@@ -11,7 +11,7 @@
         <form [formGroup]="loginForm" (ngSubmit)="login()">
             <div class="row">
                 <div class="lbl-cont"><label for="email" class="frm-label">E-mail</label></div>
-                <input type="email" class="frm-input-txt" id="email" formControlName="email"  autocomplete="off" maxlength="64" autofocus required/>
+                <input type="email" class="frm-input-txt" id="email" formControlName="email"  autocomplete="off" maxlength="64"/>
             </div>
             <div *ngIf="email?.invalid && email?.dirty && email?.touched" class="alert alert-danger">
                 <div *ngIf="email?.errors">

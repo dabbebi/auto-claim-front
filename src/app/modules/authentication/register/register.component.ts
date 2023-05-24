@@ -4,6 +4,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { AuthenticationService } from 'src/app/services/authentication/authentication.service';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
 })
 export class RegisterComponent {
 
-  constructor (private authService : AuthenticationService, private router : Router){
+  constructor (private authService : AuthenticationService, private messageService: MessageService){
   }
 
   registerForm = new FormGroup({
@@ -119,16 +120,19 @@ export class RegisterComponent {
         this.enableSubmitButton();
         this.isRegisterSuccess = true;
         this.isRegisterError = false;
-        console.log(response);  
+        console.log(response);
+        this.messageService.add({ severity: 'success', summary: 'Création du compte', detail: 'Compte crée avec succès' });
       },
       (error : HttpErrorResponse)=>{
         this.enableSubmitButton();
         this.isRegisterError = true;
         this.isRegisterSuccess = false;
         console.log(error.message);
+        this.messageService.add({ severity: 'error', summary: 'Création du compte', detail: 'La création du compte à échouée' });
       });
     } else {
       this.enableSubmitButton();
+      this.messageService.add({ severity: 'error', summary: 'Création du compte', detail: "Le formulaire n'est pas valide" });
     }
   }
 

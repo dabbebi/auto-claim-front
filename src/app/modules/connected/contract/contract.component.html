@@ -1,1 +1,131 @@
-<p>contract works!</p>
+<p-toast></p-toast>
+<div class="card control-pannel">
+    <div class="ctrl-action">
+        <p-button icon="pi pi-plus" styleClass="p-button-rounded p-button-success p-button-outlined"
+            (onClick)="showAddContractDialog()"></p-button>
+    </div>
+    <div class="ctrl-action">
+        <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-outlined"
+            [disabled]="selectedContracts.length === 0" (onClick)="showDeleteContractDialog('', 'multiple')"></p-button>
+    </div>
+    <div class="search-div">
+        <span class="p-input-icon-left" style="width: 100%;">
+            <i class="pi pi-search"></i>
+            <input pInputText type="text" (input)="dt.filterGlobal(getValue($event), 'contains')"
+                placeholder="Recherche rapide..." style="width: 100%;" />
+        </span>
+    </div>
+</div>
+<div class="card" style="max-width: 100%;">
+    <p-table #dt [value]="contractList" [tableStyle]="{ 'max-width': '100%' }" [(selection)]="selectedContracts"
+        dataKey="contractNo" [paginator]="true" [rows]="10" [selectionPageOnly]="true"
+        currentPageReportTemplate="Affichage de {first} à {last} parmis {totalRecords} contrats"
+        [rowsPerPageOptions]="[7, 10, 20]" [globalFilterFields]="['contractNo', 'contract.insuredName']"
+        [rowHover]="true" [filterDelay]="0" [showCurrentPageReport]="true">
+        <ng-template pTemplate="header">
+            <tr>
+                <th style="width: 4rem">
+                    <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                </th>
+                <th>N° du contrat</th>
+                <th>Nom de l'assuré</th>
+                <th>Date de début</th>
+                <th>Date de fin</th>
+                <th>Immatriculation</th>
+                <th>Statut</th>
+                <th></th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-contract>
+            <tr>
+                <td>
+                    <p-tableCheckbox [value]="contract"></p-tableCheckbox>
+                </td>
+                <td>{{ contract.contractNo }}</td>
+                <td>{{ contract.insuredName }}</td>
+                <td>{{ contract.startDate }}</td>
+                <td>{{ contract.endDate }}</td>
+                <td>{{ contract.vehicleRegistrationNo }}</td>
+                <td><p-tag [value]="contract.status" [severity]="getSeverity(contract.status)"></p-tag></td>
+                <td class="single-action">
+                    <p-button icon="pi pi-pencil" [style]="{'margin-right': '8px'}"
+                        styleClass="p-button-rounded p-button-warning p-button-outlined"
+                        (onClick)="showEditContractDialog(contract)"></p-button>
+                    <p-button icon="pi pi-trash" [style]="{'margin-right': '8px'}"
+                        styleClass="p-button-rounded p-button-danger p-button-outlined"
+                        (onClick)="showDeleteContractDialog(contract.contractNo, 'single')"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+
+<div class="card flex justify-content-center">
+    <p-dialog [header]="contractDialogTitle" [(visible)]="contractDialog" [style]="{width: '78vw', 'min-height': '670px'}"
+        (onHide)="hideContractDialog()" [modal]="true">
+        <div>
+            <form [formGroup]="contractForm" (ngSubmit)="saveContract()">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="lbl-cont"><label for="startDate" class="frm-label">Nom de l'assuré</label>
+                        </div>
+                        <div class="input-cont">
+                            <input type="text" pInputText style="width: 100%;" id="insuredName"
+                                formControlName="insuredName" autocomplete="off" maxlength="25" />
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lbl-cont"><label for="endDate" class="frm-label">Immatriculation</label>
+                        </div>
+                        <div class="input-cont">
+                            <input type="text" pInputText style="width: 100%;" id="vehicleRegistrationNo"
+                                formControlName="vehicleRegistrationNo" autocomplete="off" maxlength="25" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="lbl-cont"><label for="startDate" class="frm-label date-lbl-cont">Date de début</label>
+                        </div>
+                        <div class="input-cont">
+                            <p-calendar [style]="{width: '100%'}" id="startDate" formControlName="startDate" [inline]="true"
+                            [locale]="calendar_fr" [dateFormat]="'dd/mm/yy'"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="lbl-cont"><label for="endDate" class="frm-label date-lbl-cont">Date de fin</label>
+                        </div>
+                        <div class="input-cont">
+                            <p-calendar [style]="{width: '100%'}" id="endDate" formControlName="endDate" [inline]="true"
+                            [locale]="calendar_fr" [dateFormat]="'dd/mm/yy'"></p-calendar>
+                        </div>
+                    </div>
+                </div>  
+            </form>
+        </div>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-times" (click)="hideContractDialog()" label="Annuler"
+                styleClass="p-button-text p-button-danger"></p-button>
+            <p-button icon="pi pi-save" (click)="saveContract()" label="Enregistrer"
+                styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+</div>
+
+<div class="card flex justify-content-center">
+    <p-dialog header="Supprimer un contrat" [(visible)]="deleteContractDialog" [style]="{width: '500px'}"
+        (onHide)="hideDeleteContractDialog()" [modal]="true">
+        <div *ngIf="deleteMode == 'single'">
+            Voulez vous supprimer le contrat n° {{currentContractNo}}?
+        </div>
+        <div *ngIf="deleteMode == 'multiple'">
+            Voulez vous supprimer les contrats sélectionnés?
+        </div>
+        <ng-template pTemplate="footer">
+            <p-button icon="pi pi-times" (click)="hideDeleteContractDialog()" label="Annuler"
+                styleClass="p-button-text p-button-danger"></p-button>
+            <p-button icon="pi pi-check" (click)="deleteContract()" label="Supprimer"
+                styleClass="p-button-text"></p-button>
+        </ng-template>
+    </p-dialog>
+</div>

@@ -1,1 +1,163 @@
-<p>claim works!</p>
+<p-toast></p-toast>
+<div *ngIf="!isClaimDetails" class="full-width">
+    <div class="card control-pannel">
+        <div class="ctrl-action">
+            <p-button icon="pi pi-plus" styleClass="p-button-rounded p-button-success p-button-outlined"
+                (onClick)="showAddClaimDialog()"></p-button>
+        </div>
+        <div class="ctrl-action">
+            <p-button icon="pi pi-trash" styleClass="p-button-rounded p-button-danger p-button-outlined"
+                [disabled]="selectedClaims.length === 0" (onClick)="showDeleteClaimDialog('', 'multiple')"></p-button>
+        </div>
+        <div class="search-div">
+            <span class="p-input-icon-left" style="width: 100%;">
+                <i class="pi pi-search"></i>
+                <input pInputText type="text" (input)="dt.filterGlobal(getValue($event), 'contains')"
+                    placeholder="Recherche rapide..." style="width: 100%;" />
+            </span>
+        </div>
+    </div>
+    <div class="card" style="max-width: 100%;">
+        <p-table #dt [value]="claimList" [tableStyle]="{ 'max-width': '100%' }" [(selection)]="selectedClaims"
+            dataKey="claimNo" [paginator]="true" [rows]="10" [selectionPageOnly]="true"
+            currentPageReportTemplate="Affichage de {first} à {last} parmis {totalRecords} sinistres"
+            [rowsPerPageOptions]="[7, 10, 20]" [globalFilterFields]="['claimNo', 'contract.insuredName']"
+            [rowHover]="true" [filterDelay]="0" [showCurrentPageReport]="true">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th style="width: 4rem">
+                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th>N° du sinistre</th>
+                    <th>Nom de l'assuré</th>
+                    <th>Date d'accident</th>
+                    <th>Date de création</th>
+                    <th>Statut</th>
+                    <th></th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-claim>
+                <tr>
+                    <td>
+                        <p-tableCheckbox [value]="claim"></p-tableCheckbox>
+                    </td>
+                    <td>{{ claim.claimNo }}</td>
+                    <td>{{ claim.contract.insuredName }}</td>
+                    <td>{{ claim.accidentDate }}</td>
+                    <td>{{ claim.creationDate }}</td>
+                    <td><p-tag [value]="claim.status" [severity]="getSeverity(claim.status)"></p-tag></td>
+                    <td class="single-action">
+                        <p-button icon="pi pi-pencil" [style]="{'margin-right': '8px'}"
+                            styleClass="p-button-rounded p-button-warning p-button-outlined"
+                            (onClick)="showEditClaimDialog(claim)"></p-button>
+                        <p-button icon="pi pi-trash" [style]="{'margin-right': '8px'}"
+                            styleClass="p-button-rounded p-button-danger p-button-outlined"
+                            (onClick)="showDeleteClaimDialog(claim.claimNo, 'single')"></p-button>
+                        <p-button icon="pi pi-external-link"
+                            styleClass="p-button-rounded p-button-success p-button-outlined"
+                            (onClick)="moveToClaimDetails(claim.claimNo)"></p-button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+
+    <div class="card flex justify-content-center">
+        <p-dialog [header]="claimDialogTitle" [(visible)]="claimDialog" [style]="{width: '78vw', 'min-height': '600px'}"
+            (onHide)="hideClaimDialog()" [modal]="true">
+            <div>
+                <form [formGroup]="claimForm" (ngSubmit)="saveClaim()">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="lbl-cont"><label for="accidentDate" class="frm-label">Date d'accident :</label>
+                            </div>
+                            <p-calendar [style]="{width: '75%'}" id="accidentDate" formControlName="accidentDate"
+                                [locale]="calendar_fr" [dateFormat]="'dd/mm/yy'"></p-calendar>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="lbl-cont"><label for="contractNo" class="frm-label">N° du contrat :</label>
+                            </div>
+                            <input type="text" pInputText style="width: 75%;" id="contractNo"
+                                formControlName="contractNo" autocomplete="off" maxlength="25" />
+                        </div>
+                    </div>
+                    <div class="light-row">
+                        <div class="col-md-6">
+                            <div *ngIf="accidentDateError" class="alert alert-danger">
+                                * Vous avez choisi une date future.
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div *ngIf="contractNo?.invalid && contractNo?.dirty && contractNo?.touched"
+                                class="alert alert-danger">
+                                <div *ngIf="contractNo?.errors">
+                                    * Le numéro du contrat doit contenir entre 3 et 25 caractères.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="lbl-cont"><label for="accidentDate" class="frm-label">Photos :</label></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="lbl-cont"><label for="status" class="frm-label">Statut :</label></div>
+                            <p-dropdown [style]="{'minWidth':'100%'}" [options]="statusList" id="status"
+                                formControlName="status" optionLabel="label" optionValue="value"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="card flex justify-content-center picture-card">
+                            <p-fileUpload name="pictures" [url]="url" (onUpload)="onUpload($event)" [multiple]="true"
+                                accept="image/*" [maxFileSize]="10000000" chooseLabel=" Choisir"
+                                uploadLabel="Sauvegarder" cancelLabel="Annuler">
+                                <ng-template pTemplate="content">
+                                    <ul *ngIf="uploadedPictures.length">
+                                        <li *ngFor="let file of uploadedPictures">{{ file.name }} - {{ file.size }}
+                                            bytes</li>
+                                    </ul>
+                                </ng-template>
+                            </p-fileUpload>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-times" (click)="hideClaimDialog()" label="Annuler"
+                    styleClass="p-button-text p-button-danger"></p-button>
+                <p-button icon="pi pi-save" (click)="saveClaim()" label="Enregistrer"
+                    styleClass="p-button-text"></p-button>
+            </ng-template>
+        </p-dialog>
+    </div>
+
+    <div class="card flex justify-content-center">
+        <p-dialog header="Supprimer un sinistre" [(visible)]="deleteClaimDialog" [style]="{width: '500px'}"
+            (onHide)="hideDeleteClaimDialog()" [modal]="true">
+            <div *ngIf="deleteMode == 'single'">
+                Voulez vous supprimer le sinistre n° {{currentClaimNo}}?
+            </div>
+            <div *ngIf="deleteMode == 'multiple'">
+                Voulez vous supprimer les sinistres sélectionnés?
+            </div>
+            <ng-template pTemplate="footer">
+                <p-button icon="pi pi-times" (click)="hideDeleteClaimDialog()" label="Annuler"
+                    styleClass="p-button-text p-button-danger"></p-button>
+                <p-button icon="pi pi-check" (click)="deleteClaim()" label="Supprimer"
+                    styleClass="p-button-text"></p-button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>
+<div *ngIf="isClaimDetails" class="full-width">
+    <div class="card control-pannel">
+        <div class="ctrl-action">
+            <p-button icon="pi pi-chevron-left" styleClass="p-button-rounded p-button-success p-button-outlined"
+                (onClick)="backToClaimPage()"></p-button>
+        </div>
+        <div class="middle-allign">
+            Détails du sinistre n° {{ currentClaimNo }} :
+        </div>
+    </div>
+    <app-claim-details [claimNo]="currentClaimNo"></app-claim-details>
+</div>

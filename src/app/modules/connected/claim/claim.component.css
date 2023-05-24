@@ -1,0 +1,46 @@
+.control-pannel {
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.ctrl-action {
+    margin-right: 8px;
+}
+
+.single-action {
+    display: flex;
+    flex-direction: row;
+}
+
+td , th{
+    padding: 10px 16px !important;
+}
+
+.picture-card {
+    width: 100%;
+}
+
+.ng-star-inserted {
+    width: 85%;
+}
+
+.search-div {
+    width: calc(100% - 80px);
+}
+
+:host::ng-deep.p-dropdown {
+    width: 28vw !important;
+}
+
+.full-width {
+    width: 100% !important;
+}
+
+.middle-allign {
+    vertical-align: middle;
+    padding-top: 10px;
+    font-size: 17px;
+    color: #005f54;
+}

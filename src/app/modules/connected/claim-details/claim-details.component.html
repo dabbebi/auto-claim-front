@@ -1,0 +1,69 @@
+<div class="card">
+    <p-tabView styleClass="tabview-custom">
+        <p-tabPanel>
+            <ng-template pTemplate="header">
+                <i class="pi pi-folder"></i>
+                <span class="tab-title">Sinistre</span>
+            </ng-template>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Date de l'accident </div>
+                    <div class="input-cont input-details">{{ claimDetails.accidentDate }}</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Date de création </div>
+                    <div class="input-cont input-details">{{ claimDetails.creationDate }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="lbl-cont-full green-color font-bold">Statut du sinistre </div>
+                <div class="input-cont input-details-tag"><p-tag [value]="claimDetails.status" [severity]="getClaimSeverity(claimDetails.status)"></p-tag></div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Header II">
+            <ng-template pTemplate="header">
+                <i class="pi pi-list"></i>
+                <span class="tab-title">Contrat</span>
+            </ng-template>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">N° du contrat </div>
+                    <div class="input-cont input-details">{{ contractDetails.contractNo }}</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Nom de l'assuré </div>
+                    <div class="input-cont input-details">{{ contractDetails.insuredName }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Date de début </div>
+                    <div class="input-cont input-details">{{ contractDetails.startDate }}</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Date de fin </div>
+                    <div class="input-cont input-details">{{ contractDetails.endDate }}</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Immatriculation </div>
+                    <div class="input-cont input-details">{{ contractDetails.vehicleRegistrationNo }}</div>
+                </div>
+                <div class="col-md-6">
+                    <div class="lbl-cont green-color font-bold">Statut du contrat </div>
+                    <div class="input-cont input-details-tag"><p-tag [value]="contractDetails.status" [severity]="getContractSeverity(contractDetails.status)"></p-tag></div>
+                </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Header III">
+            <ng-template pTemplate="header">
+                <i class="pi pi-image"></i>
+                <span class="tab-title">Photos</span>
+            </ng-template>
+            <div class="center">
+                Aucune photo trouvée !
+            </div>
+        </p-tabPanel>
+    </p-tabView>
+</div>

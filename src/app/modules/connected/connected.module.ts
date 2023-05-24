@@ -7,20 +7,42 @@ import { ConnectedRoutes } from './connected-routing.module';
 import { ContractComponent } from './contract/contract.component';
 import { ClaimComponent } from './claim/claim.component';
 import { ConnComponentsModule } from './conn-components/conn-components.module';
-
-
+import { ToastModule } from 'primeng/toast';
+import { ReactiveFormsModule } from '@angular/forms';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
+import { TagModule } from 'primeng/tag';
+import { DialogModule } from 'primeng/dialog';
+import { InputTextModule } from 'primeng/inputtext';
+import { CalendarModule } from 'primeng/calendar';
+import { FileUploadModule } from 'primeng/fileupload';
+import { DropdownModule } from 'primeng/dropdown';
+import { ClaimDetailsComponent } from './claim-details/claim-details.component';
+import { TabViewModule } from 'primeng/tabview';
 
 @NgModule({
   declarations: [
     ConnectedComponent,
     HomeComponent,
     ContractComponent,
-    ClaimComponent
+    ClaimComponent,
+    ClaimDetailsComponent
   ],
   imports: [
     CommonModule,
     RouterModule.forChild(ConnectedRoutes),
-    ConnComponentsModule
+    ConnComponentsModule,
+    ReactiveFormsModule,
+    ToastModule,
+    TableModule,
+    ButtonModule,
+    TagModule,
+    DialogModule,
+    InputTextModule,
+    CalendarModule,
+    FileUploadModule,
+    DropdownModule,
+    TabViewModule
   ]
 })
 export class ConnectedModule { }

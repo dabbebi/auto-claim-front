@@ -7,7 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AuthenticationRoutes } from './authentication-routing.module';
 import { AuthComponentsModule } from './auth-components/auth-components.module';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { ToastModule } from 'primeng/toast';
 
 
 @NgModule({
@@ -20,7 +20,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule,
     RouterModule.forChild(AuthenticationRoutes),
     AuthComponentsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ToastModule
   ]
 })
 
