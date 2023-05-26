@@ -106,17 +106,18 @@
                                 formControlName="status" optionLabel="label" optionValue="value"></p-dropdown>
                         </div>
                     </div>
+                    <div class="row card pitures-section" *ngIf="currentMode === 'edit'">
+                        <div class="pic-container card" *ngFor="let picture of currentPictures">
+                            <img class="claim-pic" src="{{ backEndUrl + '/picture/download/' + picture.publicId }}" alt="" srcset="" />
+                            <p-button icon="pi pi-trash" [style]="{'position': 'relative', bottom: 'calc(100% - 35px)'}"
+                            styleClass="p-button-rounded p-button-danger" (onClick)="removePicture(picture.publicId)"></p-button>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="card flex justify-content-center picture-card">
-                            <p-fileUpload name="pictures" [url]="url" (onUpload)="onUpload($event)" [multiple]="true"
-                                accept="image/*" [maxFileSize]="10000000" chooseLabel=" Choisir"
-                                uploadLabel="Sauvegarder" cancelLabel="Annuler">
-                                <ng-template pTemplate="content">
-                                    <ul *ngIf="uploadedPictures.length">
-                                        <li *ngFor="let file of uploadedPictures">{{ file.name }} - {{ file.size }}
-                                            bytes</li>
-                                    </ul>
-                                </ng-template>
+                            <p-fileUpload name="File" (onRemove)="onRemove($event)" (onSelect)="onUpload($event)" [multiple]="true"
+                                accept="image/*" [maxFileSize]="10000000" chooseLabel="&nbsp;&nbsp;Ajouter des photos"
+                                uploadLabel="Sauvegarder" cancelLabel="Annuler" [showUploadButton]="false" [showCancelButton]="false" [files]="uploadedPictures">
                             </p-fileUpload>
                         </div>
                     </div>

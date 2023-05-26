@@ -5,6 +5,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { LocaleSettings } from 'primeng/calendar';
 import { ClaimDetails } from 'src/app/models/claimDetails.model';
+import { backendUrl } from 'src/app/services/back-end-url';
 import { ClaimService } from 'src/app/services/claim/claim.service';
 
 @Component({
@@ -23,6 +24,7 @@ export class ClaimComponent {
   currentClaim: object | ClaimDetails = {};
   currentMode: string = '';
   uploadedPictures: any[] = [];
+  removedPictures: any[] = [];
   url: string = '';
   accidentDateError: Boolean = false;
   deleteMode: string = '';
@@ -48,6 +50,9 @@ export class ClaimComponent {
   calendar_fr: LocaleSettings ;
   currentClaimCreationDate: Date = new Date();
   isClaimDetails: Boolean = false;
+  currentPictures: any[] = [];
+  backEndUrl: string= backendUrl;
+
   constructor(private claimService: ClaimService, private datepipe: DatePipe, private messageService: MessageService) {
     this.calendar_fr = {
       monthNames: [ "janvier", "février", "mars", "avril", "mai", "juin",
@@ -66,10 +71,34 @@ export class ClaimComponent {
     this.getAllClaims();
   }
 
+  removePicture(id: string) {
+    let newPictures : any[] = [];
+    this.currentPictures.forEach(pic => {
+      if(pic.publicId !== id) {
+        newPictures.push(pic);
+      } else {
+        this.removedPictures.push({publicId: id});
+      }
+    });
+    this.currentPictures = newPictures;
+  }
+
   onUpload(event: any) {
     for(let file of event.files) {
         this.uploadedPictures.push(file);
     }
+    console.log(this.uploadedPictures);
+  }
+
+  onRemove(event: any) {
+    let tempPictures: any[] = this.uploadedPictures;
+    this.uploadedPictures = [];
+    tempPictures.forEach(elt => {
+        if(elt !== event.file) {
+          this.uploadedPictures.push(elt);
+        }
+    })
+    console.log(this.uploadedPictures);
   }
 
   getValue(event: Event): string {
@@ -94,6 +123,8 @@ export class ClaimComponent {
   }
 
   showAddClaimDialog() {
+    this.uploadedPictures = [];
+    this.removedPictures = [];
     this.claimForm.setValue({
       accidentDate: new Date(),
       contractNo: '',
@@ -105,8 +136,11 @@ export class ClaimComponent {
   }
 
   showEditClaimDialog(claim: any) {
+    this.uploadedPictures = [];
+    this.removedPictures = [];
     this.currentClaim = claim;
     this.currentClaimNo = claim.claimNo;
+    this.currentPictures = claim.pictures;
     this.currentClaimCreationDate = new Date(claim.creationDate.split('/')[2], +(claim.creationDate.split('/')[1]) - 1, claim.creationDate.split('/')[0]);
     this.claimForm.setValue({
       accidentDate: new Date(claim.accidentDate.split('/')[2], +(claim.accidentDate.split('/')[1]) - 1, claim.accidentDate.split('/')[0]),
@@ -226,52 +260,81 @@ export class ClaimComponent {
     }
   }
 
+  postNewClaim(pictures : any[]) {
+    var claim = {
+      accidentDate: this.claimForm.value.accidentDate,
+      contractNo: this.claimForm.value.contractNo,
+      status: this.claimForm.value.status,
+      pictures: pictures
+    };
+    this.claimService.createClaim(claim).subscribe((response: any) => {
+      this.hideClaimDialog();
+      this.messageService.add({ severity: 'success', summary: "Création d'un sinistre", detail: 'Sinistre n°' + response.claimNo + 'a été crée.' });
+      this.getAllClaims();
+    },(error: HttpErrorResponse) => {
+      this.messageService.add({ severity: 'error', summary: "Création d'un sinistre", detail: 'La création du sinistre à échouée!'});
+      console.log(error.message); 
+    });
+  }
+
   createClaim() {
     this.accidentDateError = false;
     let today = new Date();
-    if(this.claimForm.value.accidentDate !== null && this.claimForm.value.accidentDate !== undefined && this.claimForm.value.accidentDate >= today){
+    if(this.claimForm.value.accidentDate !== null && this.claimForm.value.accidentDate !== undefined && this.claimForm.value.accidentDate > today){
       this.accidentDateError = true;
     }
     if(this.claimForm.valid && !this.accidentDateError) {
-      var claim = {
-        accidentDate: this.claimForm.value.accidentDate,
-        contractNo: this.claimForm.value.contractNo,
-        status: this.claimForm.value.status,
-        pictures: []
-      };
-      this.claimService.createClaim(claim).subscribe((response: any) => {
-        this.hideClaimDialog();
-        this.messageService.add({ severity: 'success', summary: "Création d'un sinistre", detail: 'Sinistre n°' + response.claimNo + 'a été crée.' });
-        this.getAllClaims();
-      },(error: HttpErrorResponse) => {
-        this.messageService.add({ severity: 'error', summary: "Création d'un sinistre", detail: 'La création du sinistre à échouée!'});
-        console.log(error.message); 
-      });
+      if(this.uploadedPictures.length == 0) {
+        this.postNewClaim([]);
+      }else {
+        this.claimService.uploadClaimPictures(this.uploadedPictures).subscribe((response: any) => {
+          console.log(response);
+          this.postNewClaim(response);
+        }, (error: HttpErrorResponse) => {
+          console.log(error.message);
+        });
+      }
     }else {
       this.messageService.add({ severity: 'error', summary: "Création d'un sinistre", detail: "Le formulaire n'est pas valide!" });
     }
   }
 
+  postExistingClaim(pictures : any[]) {
+    var claim = {
+      accidentDate: this.claimForm.value.accidentDate,
+      contractNo: this.claimForm.value.contractNo,
+      status: this.claimForm.value.status,
+      addedPictures: pictures,
+      removedPictures: this.removedPictures
+    };
+    console.log(claim);
+    
+    this.claimService.updateClaim(this.currentClaimNo, claim).subscribe((response: any) => {
+      this.hideClaimDialog();
+      this.messageService.add({ severity: 'success', summary: "Modification d'un sinistre", detail: 'Sinistre n°' + response.claimNo + 'a été modifié.' });
+      this.getAllClaims();
+    },(error: HttpErrorResponse) => {
+      this.messageService.add({ severity: 'error', summary: "Modification d'un sinistre", detail: 'La modification du sinistre à échouée!'});
+      console.log(error.message); 
+    });
+  }
+
   updateClaim() {
     this.accidentDateError = false;
-    if(this.claimForm.value.accidentDate !== null && this.claimForm.value.accidentDate !== undefined && this.claimForm.value.accidentDate >= this.currentClaimCreationDate){
+    if(this.claimForm.value.accidentDate !== null && this.claimForm.value.accidentDate !== undefined && this.claimForm.value.accidentDate > this.currentClaimCreationDate){
       this.accidentDateError = true;
     }
     if(this.claimForm.valid && !this.accidentDateError) {
-      var claim = {
-        accidentDate: this.claimForm.value.accidentDate,
-        contractNo: this.claimForm.value.contractNo,
-        status: this.claimForm.value.status,
-        pictures: []
-      };
-      this.claimService.updateClaim(this.currentClaimNo, claim).subscribe((response: any) => {
-        this.hideClaimDialog();
-        this.messageService.add({ severity: 'success', summary: "Modification d'un sinistre", detail: 'Sinistre n°' + response.claimNo + 'a été crée.' });
-        this.getAllClaims();
-      },(error: HttpErrorResponse) => {
-        this.messageService.add({ severity: 'error', summary: "Modification d'un sinistre", detail: 'La modification du sinistre à échouée!'});
-        console.log(error.message); 
-      });
+      if(this.uploadedPictures.length == 0) {
+        this.postExistingClaim([]);
+      }else {
+        this.claimService.uploadClaimPictures(this.uploadedPictures).subscribe((response: any) => {
+          console.log(response);
+          this.postExistingClaim(response);
+        }, (error: HttpErrorResponse) => {
+          console.log(error.message);
+        });
+      }
     }else {
       this.messageService.add({ severity: 'error', summary: "Modification d'un sinistre", detail: "Le formulaire n'est pas valide!" });
     }

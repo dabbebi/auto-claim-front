@@ -1,0 +1,52 @@
+.stat-2 {
+    width: 100%;
+}
+
+.claim-diagram {
+    width: 100%;
+}
+
+.claim-chart {
+    max-height: calc(50vh - 334px);
+}
+
+.stat-title {
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    font-size: 18px;
+}
+
+.stat-card {
+    margin: 5px;
+    width: 22%;
+}
+
+.icon {
+    width: 30%;
+    text-align: center;
+    padding: 16px 6px;
+    margin-left: 5px;
+    background-color: #008B7B;
+    color: aliceblue;
+}
+
+.icon-label {
+    text-align: center;
+    padding-top: 28px;
+    padding-left: 20px;
+    font-size: 24px;
+}
+
+.card-header {
+    margin-top: 15px;
+}
+
+.usr-count {
+    width: 100%;
+    align-items: center;
+    font-size: 380%;
+    text-align: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+}

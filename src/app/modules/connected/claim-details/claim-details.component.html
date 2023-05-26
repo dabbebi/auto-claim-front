@@ -61,9 +61,32 @@
                 <i class="pi pi-image"></i>
                 <span class="tab-title">Photos</span>
             </ng-template>
-            <div class="center">
+            <div class="center" *ngIf="pictures.length == 0">
                 Aucune photo trouvée !
+            </div>
+            <div class="center" *ngIf="pictures.length > 0">
+                <div class="row-pic">
+                    <div class="pic-container card" *ngFor="let picture of pictures">
+                        <div (click)="showPicture(picture.publicId)">
+                            <img class="claim-pic" src="{{ backEndUrl + '/picture/download/' + picture.publicId }}" alt="" srcset="" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </p-tabPanel>
     </p-tabView>
+</div>
+<div class="card flex justify-content-center">
+    <p-dialog header="Photos sinistre n° {{ claimNo }}" [(visible)]="viewPictureDialog" [style]="{width: 'auto', 'max-height': '80vh', 'min-height': '80vh', 'max-width': '70vw', 'min-width': '70vw'}"
+        (onHide)="hideViewPictureDialog()" [modal]="true">
+        <div class="row big-pic-container">
+            <div class="pic-view-action">
+                <p-button icon="pi pi-chevron-left" styleClass="p-button-rounded p-button-outlined" (onClick)="showPreviousPicture()"></p-button>
+            </div>
+            <img id="picture-animmating" class="big-pic" src="{{ backEndUrl + '/picture/download/' + pictureToShow }}" alt="" srcset="">
+            <div class="pic-view-action">
+                <p-button icon="pi pi-chevron-right" styleClass="p-button-rounded p-button-outlined" (onClick)="showNextPicture()"></p-button>
+            </div>
+        </div>
+    </p-dialog>
 </div>

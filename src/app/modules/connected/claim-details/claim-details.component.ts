@@ -1,6 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input } from '@angular/core';
+import { backendUrl } from 'src/app/services/back-end-url';
 import { ClaimService } from 'src/app/services/claim/claim.service';
 
 @Component({
@@ -14,11 +15,52 @@ export class ClaimDetailsComponent {
   claimDetails: any = { };
   contractDetails: any = {};
   pictures: any[] = [];
+  pictureToShow: string = '';
 
   constructor(private claimService: ClaimService, private datepipe: DatePipe) { }
 
   ngOnInit(): void {
     this.getClaimDetails();
+  }
+
+  backEndUrl: string = backendUrl;
+  viewPictureDialog: Boolean = false;
+
+  hideViewPictureDialog() {
+    this.viewPictureDialog = false;
+  }
+
+  showPicture(id: string) {
+    this.pictureToShow = id;
+    this.viewPictureDialog = true;
+  }
+
+  showNextPicture() {
+    let index = 0;
+    for(index = 0; index < this.pictures.length; index ++) {
+      if(this.pictures[index].publicId == this.pictureToShow) {
+        break;
+      }
+    }
+    if(index === this.pictures.length - 1) {
+      this.pictureToShow = this.pictures[0].publicId;
+    }else {
+      this.pictureToShow = this.pictures[index + 1].publicId ;
+    }
+  }
+
+  showPreviousPicture() {
+    let index = 0;
+    for(index = 0; index < this.pictures.length; index ++) {
+      if(this.pictures[index].publicId == this.pictureToShow) {
+        break;
+      }
+    }
+    if(index === 0) {
+      this.pictureToShow = this.pictures[this.pictures.length - 1].publicId;
+    }else {
+      this.pictureToShow = this.pictures[index - 1].publicId ;
+    }
   }
 
   getMonth(month: string) {
@@ -36,7 +78,7 @@ export class ClaimDetailsComponent {
       "Novembre",
       "Décembre"
     ]
-    return months[+month];
+    return months[+month - 1];
   }
 
   getClaimSeverity(status: string) {
@@ -56,7 +98,7 @@ export class ClaimDetailsComponent {
     if(status == 'Valide') {
       return 'success';
     }else {
-      return 'error';
+      return 'warning';
     }
   }
 
@@ -73,8 +115,10 @@ export class ClaimDetailsComponent {
     }
   }
 
-  getContractStatus(endDate: Date) {
+  getContractStatus(date: string) {
     let today = new Date();
+    let formattedDate = this.datepipe.transform(date, 'dd/MM/yyyy') + '';
+    let endDate = new Date(+formattedDate.split('/')[2], +formattedDate.split('/')[1] - 1, +formattedDate.split('/')[0]);
     if(endDate < today) {
       return 'Expiré';
     } else {
@@ -83,7 +127,7 @@ export class ClaimDetailsComponent {
   }
 
   formatDate(date: string) {
-    return date.split('/')[0] + ' ' + this.getMonth(date.split('/')[1]) + ' ' + date.split('/')[2]
+    return date.split('/')[0] + ' ' + this.getMonth(date.split('/')[1]) + ' ' + date.split('/')[2];
   }
 
   getClaimDetails() {

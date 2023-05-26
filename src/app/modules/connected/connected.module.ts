@@ -19,6 +19,8 @@ import { FileUploadModule } from 'primeng/fileupload';
 import { DropdownModule } from 'primeng/dropdown';
 import { ClaimDetailsComponent } from './claim-details/claim-details.component';
 import { TabViewModule } from 'primeng/tabview';
+import { ChartModule } from 'primeng/chart';
+import { GalleriaModule } from 'primeng/galleria';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { TabViewModule } from 'primeng/tabview';
     CalendarModule,
     FileUploadModule,
     DropdownModule,
-    TabViewModule
+    TabViewModule,
+    ChartModule,
+    GalleriaModule
   ]
 })
 export class ConnectedModule { }

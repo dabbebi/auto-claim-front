@@ -132,7 +132,7 @@ export class ContractComponent {
 
   getStatus(date: string) {
     let today = new Date();
-    let endDate : Date = new Date(+date.split('/')[2], +date.split('/')[1], +date.split('/')[0]);
+    let endDate : Date = new Date(+date.split('/')[2], +date.split('/')[1] - 1, +date.split('/')[0]);
     if(endDate < today) {
       return 'Expiré';
     } else {

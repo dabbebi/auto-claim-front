@@ -38,4 +38,15 @@ export class ClaimService {
     var reqHeader = new HttpHeaders({ 'Authorization': '' + localStorage.getItem("token")});
     return this.http.get<any>(backendUrl + '/claim/' + id, { headers: reqHeader });
   }
+
+  uploadClaimPictures(pictures: any[]) {
+    var reqHeader = new HttpHeaders({ 'Authorization': '' + localStorage.getItem("token")});
+    
+    const formData = new FormData();
+    pictures.forEach(pic => {
+      formData.append("File",  pic);
+    })
+    
+    return this.http.post<any>(backendUrl + '/picture/upload', formData,{ headers: reqHeader });
+  }
 }

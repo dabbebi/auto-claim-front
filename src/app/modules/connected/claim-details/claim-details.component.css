@@ -9,3 +9,53 @@
 .input-details-tag {
     padding-top: 8px;
 }
+
+.row-pic {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.pic-container {
+    height: 300px;
+    max-height: 300px;
+    min-height: 300px;
+    width: auto;
+    margin: 6px;
+}
+
+.claim-pic {
+    height: 300px;
+    max-height: 300px;
+    min-height: 300px;
+    width: auto;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.claim-pic:hover {
+    transform: scale(1.05);
+    transition: 0.5s;
+}
+
+.big-pic {
+    max-height: calc(80vh - 130px);
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: auto;
+    margin-bottom: auto;
+    align-items: center;
+    position: relative;
+}
+
+.pic-view-action {
+    padding-left: 10px;
+    padding-right: 10px;
+    
+    align-items: middle;
+}
+
+.big-pic-container {
+    align-items: center;
+    min-height: calc(80vh - 130px);
+}
